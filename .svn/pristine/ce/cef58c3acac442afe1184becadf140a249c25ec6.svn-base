@@ -1,0 +1,36 @@
+#hibernate.dialect=sy.util.Oracle10gDialect
+#driverClassName=oracle.jdbc.driver.OracleDriver
+#validationQuery=SELECT 1 FROM DUAL
+#jdbc_url=jdbc:oracle:thin:@localhost:1521:orcl
+#jdbc_username=bjlyjoa
+#jdbc_password=bjlyjoa
+
+#hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+#driverClassName=com.mysql.jdbc.Driver
+#validationQuery=SELECT 1
+#jdbc_url=jdbc:mysql://localhost:3306/lightmvc?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+#jdbc_username=root
+#jdbc_password=123
+
+
+hibernate.dialect=org.hibernate.dialect.SQLServer2008Dialect
+driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+validationQuery=SELECT 1
+jdbc_url=jdbc:sqlserver://114.55.60.21:1433;database=begintest;integratedSecurity=false
+jdbc_username=sa
+jdbc_password=xqd2016!
+
+
+hibernate.hbm2ddl.auto=none
+hibernate.show_sql=true
+hibernate.format_sql=true
+hibernate.use_sql_comments=false
+
+
+memcached_servers=192.168.16.219:11211
+memcached_initConn=20
+memcached_minConn=20
+memcached_maxConn=1000
+memcached_maintSleep=30000
+memcached_nagle=false
+memcached_socketTO=3000

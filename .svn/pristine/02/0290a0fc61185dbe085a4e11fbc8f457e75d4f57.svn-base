@@ -1,0 +1,98 @@
+package com.cms.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.rmi.CORBA.Stub;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cms.constant.GlobalConstant;
+import com.cms.dao.BaseDao;
+import com.cms.model.Demo;
+import com.cms.model.PageFilter;
+import com.cms.model.Tree;
+import com.cms.model.base.Tdemo;
+import com.cms.model.base.Trole;
+import com.cms.model.entity.TStudent;
+import com.cms.service.TStudentService;
+
+@Service
+public class TStudentServiceImpl implements TStudentService {
+	@Autowired
+	private BaseDao<TStudent> tstudentDao;
+
+	@Override
+	public void add(TStudent tStudent) {
+		TStudent t = new TStudent();
+		t.setAccounts(tStudent.getAccounts());
+		t.setFbarcode(tStudent.getFbarcode());
+		tstudentDao.save(t);
+	}
+
+	@Override
+	public void delete(String uuid) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void edit(TStudent tStudent) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public TStudent get(String uuid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<TStudent> dataGrid(TStudent tStudent, PageFilter ph) {
+		List<TStudent> ul = new ArrayList<TStudent>();
+		Map<String, Object> params = new HashMap<String, Object>();
+		String hql = " from TStudent t ";
+		List<TStudent> l = tstudentDao.find(hql + whereHql(tStudent, params) + orderHql(ph), params, ph.getPage(), ph.getRows());
+		for (TStudent t : l) {
+			TStudent u = new TStudent();
+			BeanUtils.copyProperties(t, u);
+			
+			
+			ul.add(u);
+		}
+		return ul;
+	}
+
+	@Override
+	public Long count(TStudent tStudent, PageFilter ph) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		String hql = " from TStudent t ";
+		return tstudentDao.count("select count(*) " + hql + whereHql(tStudent, params), params);
+	}
+	
+	private String whereHql(TStudent tStudent, Map<String, Object> params) {
+		String hql = "";
+		if (tStudent != null) {
+			hql += " where 1=1 ";
+			if (tStudent.getFname() != null) {
+				hql += " and t.fname like :name";
+				params.put("name", "%%" + tStudent.getFname() + "%%");
+			}
+		}
+		return hql;
+	}
+
+	private String orderHql(PageFilter ph) {
+		String orderString = "";
+		if ((ph.getSort() != null) && (ph.getOrder() != null)) {
+			orderString = " order by t." + ph.getSort() + " " + ph.getOrder();
+		}
+		return orderString;
+	}
+
+}

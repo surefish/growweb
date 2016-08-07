@@ -1,0 +1,105 @@
+package com.cms.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.cms.model.Demo;
+import com.cms.model.Grid;
+import com.cms.model.Json;
+import com.cms.model.PageFilter;
+import com.cms.model.entity.TStudent;
+import com.cms.service.DemoService;
+import com.cms.service.TStudentIPService;
+import com.cms.service.TStudentService;
+
+@Controller
+@RequestMapping("/student")
+public class StudentController extends BaseController{
+	@Autowired
+	private TStudentService tStudentService;
+
+	@RequestMapping("/manager")
+	public String manager() {
+		return "/student/student";
+	}
+
+	@RequestMapping("/dataGrid")
+	@ResponseBody
+	public Grid dataGrid(TStudent tStudent, PageFilter ph) {
+		Grid grid = new Grid();
+		grid.setRows(tStudentService.dataGrid(tStudent, ph));
+		grid.setTotal(tStudentService.count(tStudent, ph));
+		return grid;
+	}
+
+	@RequestMapping("/viewPage")
+	public String viewPage(HttpServletRequest request, String uuid) {
+		TStudent t = tStudentService.get(uuid);
+		request.setAttribute("tstudent", t);
+		return "/student/studentView";
+	}
+
+	@RequestMapping("/addPage")
+	public String addPage() {
+		return "/student/studentAdd";
+	}
+
+	@RequestMapping("/add")
+	@ResponseBody
+	public Json add(TStudent tStudent) {
+		Json j = new Json();
+		try {
+			tStudentService.add(tStudent);
+			j.setSuccess(true);
+			j.setMsg("添加成功！");
+		} catch (Exception e) {
+			j.setMsg(e.getMessage());
+		}
+		return j;
+	}
+
+	@RequestMapping("/delete")
+	@ResponseBody
+	public Json delete(String uuid) {
+		Json j = new Json();
+		try {
+			tStudentService.delete(uuid);
+			j.setMsg("删除成功！");
+			j.setSuccess(true);
+		} catch (Exception e) {
+			j.setMsg(e.getMessage());
+		}
+		return j;
+	}
+
+	@RequestMapping("/get")
+	@ResponseBody
+	public TStudent get(String uuid) {
+		return tStudentService.get(uuid);
+	}
+
+	@RequestMapping("/editPage")
+	public String editPage(HttpServletRequest request, String uuid) {
+		TStudent t = tStudentService.get(uuid);
+		request.setAttribute("tstudent", t);
+		return "/student/studentEdit";
+	}
+
+	@RequestMapping("/edit")
+	@ResponseBody
+	public Json edit(TStudent tStudent) {
+		Json j = new Json();
+		try {
+			tStudentService.edit(tStudent);
+			j.setSuccess(true);
+			j.setMsg("编辑成功！");
+		} catch (Exception e) {
+			j.setMsg(e.getMessage());
+		}
+		return j;
+	}
+}

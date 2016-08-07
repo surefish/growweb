@@ -1,0 +1,156 @@
+<%@ page
+	language="java"
+	contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib
+	prefix="c"
+	uri="http://java.sun.com/jsp/jstl/core"%>
+<c:set var="ctx"
+	value="${pageContext.request.contextPath}" />
+<script
+	src="${ctx}/ueditor/ueditor.config.js"
+	type="text/javascript"></script>
+<script
+	src="${ctx}/ueditor/ueditor.all.min.js"
+	type="text/javascript"></script>
+<script
+	src="${ctx}/ueditor/lang/zh-cn/zh-cn.js"
+	type="text/javascript"></script>
+<link
+	rel="stylesheet"
+	href="${ctx}/ueditor/themes/default/css/ueditor.css">
+<script
+	type="text/javascript">
+	var editor;
+	var _editor;
+	$(function() {
+		var editor = new UE.ui.Editor({
+			autoHeightEnabled : false,
+			autoFloatEnabled : false,
+			initialFrameWidth : 700,
+			initialFrameHeight : 180,
+		});
+		editor.render('fcontent');
+		editor.ready(function() {
+			editor.setContent($("#content").val()); //赋值给UEditor
+		});
+		//$("#fcontent").val($("#content").val());
+		_editor = UE.getEditor('upload_ue');
+		_editor.ready(function() {
+			//设置编辑器不可用
+			//_editor.setDisabled();
+			//隐藏编辑器，因为不会用到这个编辑器实例，所以要隐藏
+			_editor.hide();
+		});
+
+		$('#upimage').click(function() {
+			var imgdialog = _editor.getDialog("insertimage");
+			imgdialog.render();
+			imgdialog.open();
+			_editor.addListener("beforeInsertImage", function(t, arg) {
+				$("#fimagesurl").attr("value", arg[0].src);
+			});
+		});
+
+		$('#fcatalog').combotree({
+			url : '${ctx}/messagesclass/tree',
+			parentField : 'pid',
+			lines : true,
+			panelHeight : 'auto',
+			value : '${tmessages.fcatalog}'
+		});
+
+		$('#messagesEditForm').form({
+			url : '${ctx}/messages/edit',
+			onSubmit : function() {
+				progressLoad();
+				var isValid = $(this).form('validate');
+				if (!isValid) {
+					progressClose();
+				}
+				return isValid;
+			},
+			success : function(result) {
+				progressClose();
+				result = $.parseJSON(result);
+				if (result.success) {
+					parent.$.modalDialog.openner_dataGrid.datagrid('reload');
+					//之所以能在这里调用到parent.$.modalDialog.openner_dataGrid这个对象，是因为user.jsp页面预定义好了
+					parent.$.modalDialog.handler.dialog('close');
+				} else {
+					parent.$.messager.alert('错误', result.msg, 'error');
+				}
+			}
+		});
+
+	});
+</script>
+<div
+	class="easyui-layout"
+	data-options="fit:true,border:false">
+	<div
+		data-options="region:'center',border:false"
+		title=""
+		style="overflow: hidden;padding: 3px;">
+		<form
+			id="messagesEditForm"
+			method="post">
+			<table
+				class="grid">
+				<tr>
+					<td>标题</td>
+					<td><input
+						name="fuID"
+						type="hidden"
+						value="${tmessages.fuID}" />
+						<input
+						name="ftitle"
+						type="text"
+						value="${tmessages.ftitle}"
+						placeholder="请输入消息标题"
+						class="easyui-validatebox"
+						data-options="required:true"
+						style="width:400px;height: 25px;"></td>
+				</tr>
+				<tr>
+					<td>关键字</td>
+					<td><textarea
+							name="ftag"
+							rows="3"
+							cols="80"
+							class="easyui-validatebox"
+							placeholder="请输入关键字"
+							data-options="required:true">${tmessages.ftag}</textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>消息分类</td>
+					<td><select
+						id="fcatalog"
+						name="fcatalog"
+						style="width:200px;height: 29px;"></select>
+						<a
+						class="easyui-linkbutton"
+						href="javascript:void(0)"
+						onclick="$('#fcatalog').combotree('clear');">清空</a>
+					</td>
+				</tr>
+
+
+				<tr>
+					<td>消息内容</td>
+					<td><input
+						type="hidden"
+						id="content"
+						name="content"
+						value="${tmessages.fcontent}" />
+						<script
+							id="fcontent"
+							name="fcontent"
+							type="text/plain">${tmessages.fcontent}</script>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>

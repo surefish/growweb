@@ -1,0 +1,121 @@
+package com.cms.service.impl;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.mail.Session;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cms.dao.BaseDao;
+import com.cms.model.PageFilter;
+import com.cms.model.Resource;
+import com.cms.model.SessionInfo;
+import com.cms.model.base.Tdemo;
+import com.cms.model.base.Tresource;
+import com.cms.model.entity.TNews;
+import com.cms.service.TNewsService;
+
+@Service
+public class TNewsServiceImpl implements TNewsService {
+
+	@Autowired
+	private BaseDao<TNews> ttnewsDao;
+
+	@Override
+	public List<TNews> dataGrid(TNews tNews, PageFilter ph) {
+		List<TNews> ul = new ArrayList<TNews>();
+		Map<String, Object> params = new HashMap<String, Object>();
+		String hql = " from TNews t ";
+		List<TNews> l = ttnewsDao.find(hql + whereHql(tNews, params)
+				
+				+ orderHql(ph), params, ph.getPage(), ph.getRows());
+		for (TNews t : l) {
+			TNews u = new TNews();
+			BeanUtils.copyProperties(t, u);
+			ul.add(u);
+		}
+		return ul;
+	}
+
+	@Override
+	public Long count(TNews tNews, PageFilter ph) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		String hql = " from TNews t ";
+		return ttnewsDao.count("select count(*) " + hql + whereHql(tNews, params), params);
+	}
+
+	@Override
+	public void add(TNews tNews, SessionInfo sessionInfo) {
+		TNews t = new TNews();
+		t.setFuID(UUID.randomUUID().toString());
+		t.setFtitle(tNews.getFtitle());
+		t.setFcatalog(tNews.getFcatalog());
+		t.setFcontent(StringEscapeUtils.unescapeHtml4(tNews.getFcontent()));
+		t.setFcreateBy(sessionInfo.getLoginname());
+		t.setFcreateTime(new Date());
+		t.setFimagesurl(tNews.getFimagesurl());
+		t.setFstatusCode("normal");
+		t.setFstatusDesc("正常");
+		t.setFtag(tNews.getFtag());
+		t.setFpublishtime(new Date());
+		ttnewsDao.save(t);
+	}
+
+	@Override
+	public void delete(String uuid) {
+		TNews t = ttnewsDao.get(TNews.class, uuid);
+		ttnewsDao.delete(t);
+
+	}
+
+	@Override
+	public void edit(TNews tNews, SessionInfo sessionInfo) {
+		TNews t = ttnewsDao.get(TNews.class, tNews.getFuID());
+		t.setFcatalog(tNews.getFcatalog());
+		t.setFcontent(StringEscapeUtils.unescapeHtml4(tNews.getFcontent()));
+		t.setFimagesurl(tNews.getFimagesurl());
+		t.setFotheruid(sessionInfo.getId().toString());
+		t.setFtag(tNews.getFtag());
+		t.setFtitle(tNews.getFtitle());
+		t.setFupdateBy(sessionInfo.getLoginname());
+		t.setFupdateTime(new Date());
+		ttnewsDao.update(t);
+	}
+
+	@Override
+	public TNews get(String uuid) {
+		TNews t = ttnewsDao.get(TNews.class, uuid);
+		TNews r = new TNews();
+		BeanUtils.copyProperties(t, r);
+		return r;
+	}
+
+	private String whereHql(TNews tNews, Map<String, Object> params) {
+		String hql = "";
+		if (tNews != null) {
+			hql += " where 1=1 ";
+			if (tNews.getFtitle() != null) {
+				hql += " and t.ftitle like :title";
+				params.put("title", "%%" + tNews.getFtitle() + "%%");
+			}
+		}
+		return hql;
+	}
+
+	private String orderHql(PageFilter ph) {
+		String orderString = "";
+		if ((ph.getSort() != null) && (ph.getOrder() != null)) {
+			orderString = " order by t." + ph.getSort() + " " + ph.getOrder();
+		}
+		return orderString;
+	}
+
+}

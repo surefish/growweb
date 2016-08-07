@@ -1,0 +1,17 @@
+package com.cms.controller;
+
+import com.cms.controller.BaseController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/mobile")
+public class MobileController extends BaseController {
+
+	@RequestMapping("/index")
+	public String index() {
+		return "/mobile/index";
+	}
+
+}

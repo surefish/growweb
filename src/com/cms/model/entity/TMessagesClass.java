@@ -1,0 +1,66 @@
+package com.cms.model.entity;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+
+
+import org.hibernate.annotations.GenericGenerator;
+
+
+@Entity
+@Table(name = "T_Messages_Class") 
+
+public class TMessagesClass{
+	@Id
+	@GeneratedValue(generator = "system-uuid")
+	@GenericGenerator(name = "system-uuid", strategy = "uuid")
+	private String fuID;//主键
+	private String fName;//消息类名
+	private String fMemo;//备注
+	private String fparentID;//上级
+	
+	//private String furl;
+	private String ficon;
+	
+	
+	public String getFuID() {
+		return fuID;
+	}
+	public void setFuID(String fuID) {
+		this.fuID = fuID;
+	}
+	public String getfName() {
+		return fName;
+	}
+	public void setfName(String fName) {
+		this.fName = fName;
+	}
+	public String getfMemo() {
+		return fMemo;
+	}
+	public void setfMemo(String fMemo) {
+		this.fMemo = fMemo;
+	}
+	public String getFparentID() {
+		return fparentID;
+	}
+	public void setFparentID(String fparentID) {
+		this.fparentID = fparentID;
+	}
+//	public String getFurl() {
+//		return furl;
+//	}
+//	public void setFurl(String furl) {
+//		this.furl = furl;
+//	}
+	public String getFicon() {
+		return ficon;
+	}
+	public void setFicon(String ficon) {
+		this.ficon = ficon;
+	}
+	
+}

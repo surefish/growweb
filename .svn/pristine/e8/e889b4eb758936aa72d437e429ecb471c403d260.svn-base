@@ -1,0 +1,136 @@
+package com.cms.controller;
+
+
+import java.util.List;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+
+
+import com.cms.model.Json;
+import com.cms.model.BookType;
+import com.cms.model.Tree;
+import com.cms.model.entity.TBookType;
+import com.cms.service.TBookTypeService;
+
+@Controller
+@RequestMapping("/booktype")
+public class BookTypeController extends BaseController {
+	@Autowired
+
+	private TBookTypeService tBookTypeService;
+
+	@RequestMapping("/manager")
+	public String manager() {
+		return "/booktype/booktype";
+	}
+
+	@RequestMapping("/tree")
+	@ResponseBody
+
+
+	public List<Tree> tree() {
+		return tBookTypeService.tree();
+	}
+
+	@RequestMapping("/treeGrid")
+	@ResponseBody
+	public List<BookType> treeGrid() {
+		return tBookTypeService.treeGrid();
+	}
+
+	@RequestMapping("/viewPage")
+	public String viewPage() {
+		String uuid = request.getParameter("uuid");
+
+
+		TBookType t = tBookTypeService.get(uuid);
+		request.setAttribute("tbooktype", t);
+
+
+		return "/booktype/booktypeView";
+	}
+
+	@RequestMapping("/addPage")
+	public String addPage() {
+
+		return "/booktype/booktypeAdd";
+	}
+
+	@RequestMapping("/add")
+
+
+
+	@ResponseBody
+	public Json add(TBookType tBookType) {
+		System.out.println(tBookType.getFname());
+		Json j = new Json();
+		try {
+
+			tBookTypeService.add(tBookType);
+			j.setSuccess(true);
+			j.setMsg("添加成功！");
+		} catch (Exception e) {
+			j.setMsg(e.getMessage());
+		}
+
+		return j;
+	}
+
+	@RequestMapping("/delete")
+	@ResponseBody
+	public Json delete(String uuid) {
+		Json j = new Json();
+		try {
+			tBookTypeService.delete(uuid);
+			j.setMsg("删除成功！");
+			j.setSuccess(true);
+		} catch (Exception e) {
+			j.setMsg(e.getMessage());
+		}
+		return j;
+	}
+
+	@RequestMapping("/get")
+	@ResponseBody
+	public TBookType get(String uuid) {
+		return tBookTypeService.get(uuid);
+	}
+
+	@RequestMapping("/editPage")
+	public String editPage() {
+		String uuid = request.getParameter("uuid");
+
+
+		System.out.println("BookType uuid = "+uuid);
+		TBookType t = tBookTypeService.get(uuid);
+		System.out.println(t.toString());
+		request.setAttribute("tbooktype", t);
+
+
+		return "/booktype/booktypeEdit";
+	}
+
+	@RequestMapping("/edit")
+
+
+
+	@ResponseBody
+	public Json edit(TBookType tBookType) {
+		Json j = new Json();
+		try {
+
+			tBookTypeService.edit(tBookType);
+			j.setSuccess(true);
+			j.setMsg("编辑成功！");
+		} catch (Exception e) {
+			j.setMsg(e.getMessage());
+		}
+
+		return j;
+	}
+}
