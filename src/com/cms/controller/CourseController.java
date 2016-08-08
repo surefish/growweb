@@ -1,5 +1,7 @@
 package com.cms.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -13,6 +15,7 @@ import com.cms.model.Grid;
 import com.cms.model.Json;
 import com.cms.model.PageFilter;
 import com.cms.model.SessionInfo;
+import com.cms.model.Tree;
 import com.cms.model.entity.TCourse;
 import com.cms.service.TCourseService;
 
@@ -27,6 +30,12 @@ public class CourseController extends BaseController {
 		return "/course/course";
 	}
 
+	@RequestMapping("/tree")
+	@ResponseBody
+	public List<Tree> tree() {
+		return tCourseService.tree();
+	}
+	
 	@RequestMapping("/dataGrid")
 	@ResponseBody
 	public Grid dataGrid(TCourse tCourse, PageFilter ph) {

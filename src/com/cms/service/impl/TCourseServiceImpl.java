@@ -18,6 +18,7 @@ import com.cms.dao.BaseDao;
 import com.cms.model.PageFilter;
 import com.cms.model.Resource;
 import com.cms.model.SessionInfo;
+import com.cms.model.Tree;
 import com.cms.model.base.Tdemo;
 import com.cms.model.base.Tresource;
 import com.cms.model.entity.TCourse;
@@ -125,5 +126,25 @@ public class TCourseServiceImpl implements TCourseService {
 		}
 		return orderString;
 	}
+	@Override
+	public List<Tree> tree() {
+		List<TCourse> l = null;
+		List<Tree> lt = new ArrayList<Tree>();
 
+		l = ttcourseDao.find("select distinct t from TCourse t");
+
+		if ((l != null) && (l.size() > 0)) {
+			for (TCourse r : l) {
+				Tree tree = new Tree();
+				tree.setId(r.getFuID().toString());
+//				if (r.getFparentid() != null) {
+//					tree.setPid(r.getFparentid());
+//				}
+				tree.setText(r.getFname());
+//				tree.setIconCls(r.getFicon());
+				lt.add(tree);
+			}
+		}
+		return lt;
+	}
 }
