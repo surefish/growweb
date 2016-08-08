@@ -39,6 +39,8 @@
 	}
 	$(function() {
 		$('#fcatalog').combotree({
+			editable:true,
+			
 			url : '${ctx}/newsclass/tree',
 			parentField : 'pid',
 			lines : true,
