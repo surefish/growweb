@@ -91,8 +91,34 @@
 			} ] ],
 			toolbar : '#toolbar'
 		});
-        $('#dataGrid').datagrid('enableFilter');
+		
+		 $("#submit_search").click(function () {
+             $('#dataGrid').datagrid({ queryParams: form2Json("searchform") });   //点击搜索
+         });
+       //$('#dataGrid').datagrid('enableFilter');
 	});
+	
+	
+	
+	
+	
+    function form2Json(id) {
+   	 
+        var arr = $("#" + id).serializeArray()
+        var jsonStr = "";
+
+        jsonStr += '{';
+        for (var i = 0; i < arr.length; i++) {
+            jsonStr += '"' + arr[i].name + '":"' + arr[i].value + '",'
+        }
+        jsonStr = jsonStr.substring(0, (jsonStr.length - 1));
+        jsonStr += '}'
+
+        var json = JSON.parse(jsonStr);
+        return json;
+    }
+	
+	
 	
 	function addFun() {
 		location.href = "${ctx}/course/addPage";
@@ -130,7 +156,7 @@
 		}
 		location.href='${ctx}/course/editPage?uuid=' + id
 	}
-	S
+	
 	function viewFun(id) {
 		if (id == undefined) {
 			var rows = dataGrid.datagrid('getSelections');
@@ -156,6 +182,22 @@
 		<c:if test="${fn:contains(sessionInfo.resourceList, '/course/add')}">
 			<a onclick="addFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">添加</a>
 		</c:if>
+		<form name="searchform" method="post" action="" id ="searchform">
+    <td width="70" height="30"><strong>检索：</strong></td>
+    <td height="30">
+        <input type="text" name="keyword" size=20 >
+        <select name="search_type" id="search_type" >
+            <option value="-1">请选择搜索类型</option>
+            <option value="be_name" >按专家姓名</option>
+            <option value="be_intro">按专家简介</option>
+        </select>
+        <select name="search_dept" id="search_dept">
+            <option value="-1">请选择所属科室</option>
+        </select>
+        <a id="submit_search">搜索</a>
+    </td>
+  </form>	
+		
 	</div>
 </body>
 </html>
