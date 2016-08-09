@@ -30,6 +30,19 @@ public class TCourseServiceImpl implements TCourseService {
 	@Autowired
 	private BaseDao<TCourse> ttcourseDao;
 
+	
+	
+	
+	
+	@Override
+	public List<TCourse> courselist() {
+		List<TCourse> c = ttcourseDao.find("from TCourse t");
+		
+		
+		
+		return c;
+	}
+
 	@Override
 	public List<TCourse> dataGrid(TCourse tCourse, PageFilter ph) {
 		List<TCourse> ul = new ArrayList<TCourse>();
@@ -112,9 +125,22 @@ public class TCourseServiceImpl implements TCourseService {
 		if (tCourse != null) {
 			hql += " where 1=1 ";
 			if (tCourse.getFname() != null) {
-				hql += " and t.ftitle like :title";
-				params.put("title", "%%" + tCourse.getFname() + "%%");
+				hql += " and t.fname like :name";
+				params.put("name", "%%" + tCourse.getFname() + "%%");
 			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 		}
 		return hql;
 	}
@@ -126,25 +152,5 @@ public class TCourseServiceImpl implements TCourseService {
 		}
 		return orderString;
 	}
-	@Override
-	public List<Tree> tree() {
-		List<TCourse> l = null;
-		List<Tree> lt = new ArrayList<Tree>();
 
-		l = ttcourseDao.find("select distinct t from TCourse t");
-
-		if ((l != null) && (l.size() > 0)) {
-			for (TCourse r : l) {
-				Tree tree = new Tree();
-				tree.setId(r.getFuID().toString());
-//				if (r.getFparentid() != null) {
-//					tree.setPid(r.getFparentid());
-//				}
-				tree.setText(r.getFname());
-//				tree.setIconCls(r.getFicon());
-				lt.add(tree);
-			}
-		}
-		return lt;
-	}
 }
